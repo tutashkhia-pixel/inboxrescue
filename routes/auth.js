@@ -1,5 +1,6 @@
 const express = require('express');
 const { google } = require('googleapis');
+const { saveUserTokens } = require('../firebaseAdmin');
 
 const router = express.Router();
 
@@ -28,7 +29,8 @@ router.get('/google/callback', async (req, res) => {
   const code = req.query.code;
   try {
     const { tokens } = await oauth2Client.getToken(code);
-    // TODO: Save tokens to database (Firebase) for later use
+    // Save tokens to database (Firebase) under a placeholder user id
+    await saveUserTokens('defaultUser', tokens);
     res.json({ message: 'Google OAuth successful', tokens });
   } catch (error) {
     console.error('Error retrieving Google OAuth tokens', error);
@@ -36,7 +38,7 @@ router.get('/google/callback', async (req, res) => {
   }
 });
 
-// Placeholder routes for Outlook OAuth (not implemented yet)
+// Placeholder routes for Outlook (not implemented yet)
 router.get('/outlook', (req, res) => {
   res.status(501).send('Outlook OAuth not implemented yet');
 });
