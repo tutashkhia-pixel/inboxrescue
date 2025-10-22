@@ -9,4 +9,23 @@ if (!admin.apps.length) {
   });
 }
 
-module.exports = admin;
+function saveUserTokens(userId, tokens) {
+  return admin
+    .database()
+    .ref(`users/${userId}/tokens`)
+    .set(tokens);
+}
+
+function getUserTokens(userId) {
+  return admin
+    .database()
+    .ref(`users/${userId}/tokens`)
+    .once('value')
+    .then((snapshot) => snapshot.val());
+}
+
+module.exports = {
+  admin,
+  saveUserTokens,
+  getUserTokens,
+};
