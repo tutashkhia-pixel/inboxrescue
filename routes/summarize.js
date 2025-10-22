@@ -1,12 +1,19 @@
 const express = require('express');
 const router = express.Router();
+const { summarizeEmails } = require('../openaiClient');
 
-// Placeholder for summarization route
-// TODO: Implement email summarization using GPT
-
-router.post('/', (req, res) => {
-  // For now just send stub response
-  res.json({ message: 'Summarization endpoint' });
+router.post('/', async (req, res) => {
+  try {
+    const { emails } = req.body;
+    if (!Array.isArray(emails) || emails.length === 0) {
+      return res.status(400).json({ error: 'Emails array is required' });
+    }
+    const summary = await summarizeEmails(emails);
+    res.json({ summary });
+  } catch (error) {
+    console.error('Error summarizing emails:', error);
+    res.status(500).json({ error: 'Failed to summarize emails' });
+  }
 });
 
 module.exports = router;
